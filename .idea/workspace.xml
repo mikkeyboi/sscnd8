@@ -2,7 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f9b73922-9aba-46a7-a1b6-a7cd1e9a63c5" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/bg_model_python/main_simulator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/sscnd8.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sscnd8.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -17,16 +18,7 @@
         <entry file="file://$PROJECT_DIR$/bg_model_python/main_simulator.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="136">
-              <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="initial.m" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/bg_model_matlab/initial.m">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="340">
-              <caret line="20" lean-forward="true" selection-start-line="20" selection-end-line="20" />
+              <caret line="8" selection-start-line="8" selection-end-line="8" />
             </state>
           </provider>
         </entry>
@@ -68,11 +60,6 @@
             <path>
               <item name="sscnd8" type="b2602c69:ProjectViewProjectNode" />
               <item name="sscnd8" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="sscnd8" type="b2602c69:ProjectViewProjectNode" />
-              <item name="sscnd8" type="462c0819:PsiDirectoryNode" />
-              <item name="bg_model_matlab" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
@@ -149,7 +136,7 @@
     <entry file="file://$PROJECT_DIR$/bg_model_python/main_simulator.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="136">
-          <caret line="8" lean-forward="true" selection-start-line="8" selection-end-line="8" />
+          <caret line="8" selection-start-line="8" selection-end-line="8" />
         </state>
       </provider>
     </entry>
