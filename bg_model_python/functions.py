@@ -35,3 +35,11 @@ def createSMC(tmax, dt, freq, cv):
         i = i + round(ipi / dt)
         j = j + 1
     return Istim, timespike
+
+def creatdbs(f, tmax, dt):
+
+    return
+
+def calculateEI(t, vth, timespike, tmax):
+
+    return

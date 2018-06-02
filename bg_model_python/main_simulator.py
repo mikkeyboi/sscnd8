@@ -1,5 +1,5 @@
 import numpy as np
-from createSMC import createSMC
+from functions import createSMC, bgnetwork
 
 # Time Variables
 tmax = 1000  # Maximum time (ms)
