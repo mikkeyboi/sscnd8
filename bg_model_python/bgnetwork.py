@@ -59,20 +59,21 @@ def bgnetwork(pd, wstim, freq):
     vge[:, 1] = v3
     vgi[:, 1] = v4
 
-    N2 = stn_ninf(vsn[:, 1]); N3 = gpe_ninf(vge[:, 1]);N4 = gpe_ninf(vgi[:, 1])
+    N2 = stn_ninf(vsn[:, 1]); N3 = gpe_ninf(vge[:, 1]); N4 = gpe_ninf(vgi[:, 1])
     H1 = th_hinf(vth[:, 1]); H2 = stn_hinf(vsn[:, 1]); H3 = gpe_hinf(vge[:, 1]);H4 = gpe_hinf(vgi[:, 1])
-    R1 = th_rinf(vth(:, 1)); R2 = stn_rinf(vsn(:, 1)); R3 = gpe_rinf(vge(:, 1));R4 = gpe_rinf(vgi(:, 1))
+    R1 = th_rinf(vth[:, 1]); R2 = stn_rinf(vsn[:, 1]); R3 = gpe_rinf(vge[:, 1]);R4 = gpe_rinf(vgi[:, 1])
     CA2 = 0.1
     CA3 = CA2
     CA4 = CA2
-    C2 = stn_cinf(vsn(:, 1))
+    C2 = stn_cinf(vsn[:, 1])
 
     # Time loop
+    i = 2
     for i in np.arange(i, t.size):
-        V1 = vth[:, i - 1]
-        V2 = vsn[:, i - 1]
-        V3 = vge[:, i - 1]
-        V4 = vgi[:, i - 1]
+        V1 = vth[:, i-1]
+        V2 = vsn[:, i-1]
+        V3 = vge[:, i-1]
+        V4 = vgi[:, i-1]
 
     # Synapse parameters
     S21[2: n] = S2[1: n-1]
