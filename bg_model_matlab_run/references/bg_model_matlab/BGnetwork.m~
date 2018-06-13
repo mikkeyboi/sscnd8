@@ -186,8 +186,7 @@ title('STN');
 ylabel('Vm (mV)'); xlabel('Time (msec)');
 % TODO: Firing rate (spikes/s) vs Current
 subplot(2,1,2);
-plot(timespike,Iappstn)
-title('test');
+plot()
 % % GPe
 % subplot(2,2,3); 
 % plot(t,vge(1,:));axis([0 tmax -100 80 ]) 
