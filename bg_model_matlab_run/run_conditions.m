@@ -1,7 +1,7 @@
 clear all
 close all
-
-addpath(genpath('/home/mikkeyboi/repos/sscnd8/bg_model_matlab_run/references/bg_model_matlab'))
+rootdir = uigetdir('');
+addpath(genpath(rootdir)) % Choose BG network model root
 %% Set initial conditions
 
 %time variables
@@ -24,7 +24,7 @@ r=randn(n,1)*2;
 % BGnetwork loads Istim.mat which has all the initial conditions
 save('Istim.mat','Istim','timespike','tmax','dt','v1','v2','v3','v4','r','n');
 
-%% Running BGnetwork.m
+%% Running BGnetwork.m - Returns error indices
 h=BGnetwork(0,0,0); %healthy
 %pd = BGnetwork(1,0,0); %PD
 %dbs=BGnetwork(1,1,130); %PD with DBS
