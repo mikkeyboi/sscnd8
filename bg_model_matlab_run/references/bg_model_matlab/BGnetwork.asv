@@ -103,7 +103,7 @@ for i=2:length(t)
     Ica2=gca(2)*(C2.^2).*(V2-Eca(2));
     Iahp2=gahp(2)*(V2-Ek(2)).*(CA2./(CA2+k1(2)));
     Igesn=0.5*(gsyn(1)*(V2-Esyn(1)).*(S3+S31)); %Igesn=0;
-    Iappstn=33-pd*10;
+    Iappstn=130-pd*10;
     
     %GPe cell currents
     Il3=gl(3)*(V3-El(3));
