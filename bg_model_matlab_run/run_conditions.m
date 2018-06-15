@@ -1,8 +1,8 @@
 clear all
 close all
-%rootdir = uigetdir('/references/');
-%addpath(genpath(rootdir)) % Choose BG network model root
-addpath(genpath('/home/mikkeyboi/repos/sscnd8/bg_model_matlab_run/references/bg_model_matlab'))
+rootdir = uigetdir('/references/');
+addpath(genpath(rootdir)) % Choose BG network model root
+%addpath(genpath('/home/mikkeyboi/repos/sscnd8/bg_model_matlab_run/references/bg_model_matlab'))
 %% Set initial conditions
 
 %time variables
@@ -33,7 +33,7 @@ stimstart=500; % in ms. Set to 0 for stimulation throughout entire tmax
 stimtime=500; % in ms
 stngpi=0; % 0 = STN-DBS, 1 = GPi-DBS
 stnfiring=1; % 1 = For investigating STN firing rate as current increases
-if stnfiring==1 
+if stnfiring==0 
     if pd==0 
         Istn=33;
     else
@@ -55,7 +55,7 @@ A=[0 3 2 2]; B=[0 0.1 0.04 0.04]; the=[0 30 20 20];
 %%Synapse parameters
 %In order of Igesn,Isnge,Igege,Isngi,Igigi,Igith
 gsyn = [1 0.3 1 0.3 1 .08]; Esyn = [-85 0 -85 0 -85 -85];
-tau=5; gpeak=0.43;gpeak1=0.3;  
+tau=5; gpeak=0.43;gpeak1=0.3;  100
 
 %%Setting initial matrices
 vth=zeros(n,length(t)); %thalamic membrane voltage
