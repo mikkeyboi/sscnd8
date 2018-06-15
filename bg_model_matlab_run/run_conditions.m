@@ -11,7 +11,7 @@ dt=0.01; %timestep (ms)
 t=0:dt:tmax;
 n=100; %number of neurons in each nucleus (TH, STN, GPe, GPi)
 frequency=14; % frequency of input train % ?? Affects firing rate of thalamus but not STN
-cv=0.2;
+cv=0.2; % coefficient of variation of input train (gamma distribution)
 
 %initial membrane voltages for all cells
 v1=-62+randn(n,1)*5;
@@ -32,12 +32,15 @@ freq=0; % stimulation, if DBS then default = 130 Hz
 stimstart=500; % in ms. Set to 0 for stimulation throughout entire tmax
 stimtime=500; % in ms
 stngpi=0; % 0 = STN-DBS, 1 = GPi-DBS
-if pd==0 % For investigating STN firing rate as current increases
-    Istn=33;
-else
-    Istin=23;
+stnfiring=1; % 1 = For investigating STN firing rate as current increases
+if stnfiring==1 
+    if pd==0 
+        Istn=33;
+    else
+        Istin=23;
+    end
 end
-% Below is BG network code:
+%  Below is BG network code, will take ~30 seconds to complete:
 %%Membrane parameters
 %In order of Th,STN,GP or Th,STN,GPe,GPi
 Cm=1;
@@ -67,8 +70,8 @@ Z2=zeros(n,1);Z4=zeros(n,1);
 %%with or without dbs
 Idbs=creatdbs(freq,tmax,dt); %creating DBS train with frequency freq
 if stimstart > 0
-    Idbs(1:stimstart*100)=0; % Disable DBS until stimstart
-    Idbs((stimstart+stimtime)*100:length(t))=0; % no stimulation for range outside of stim parameters
+    Idbs(1:stimstart/dt)=0; % Disable DBS until stimstart
+    Idbs((stimstart+stimtime)/dt:length(t))=0; % no stimulation for range outside of stim parameters
 end
 
 if ~wstim; Idbs=zeros(1,length(t)); end % Without DBS
@@ -155,8 +158,11 @@ for i=2:length(t)
     R1=R1+dt*((r1-R1)./tr1);
     
     %STN
-    if (50000 < i) && (i < 100000)
-        Iappstn = -0.0002;
+    
+    % Investigate STN firing rate vs current increasing throughout time
+    if stnfiring == 1 && (50000 < i) && (i < 100000) % for between 500ms and 1000ms
+        x = i-50000;
+        Iappstn = Iappstn - (Istn-x*dt);
     end
     if stngpi == 0 % For the condition where DBS does not affect STN but affects GPi only
         vsn(:,i)=V2+dt*(1/Cm*(-Il2-Ik2-Ina2-It2-Ica2-Iahp2-Igesn+Iappstn+Idbs(i)));

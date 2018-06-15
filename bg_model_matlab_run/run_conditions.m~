@@ -11,7 +11,7 @@ dt=0.01; %timestep (ms)
 t=0:dt:tmax;
 n=100; %number of neurons in each nucleus (TH, STN, GPe, GPi)
 frequency=14; % frequency of input train % ?? Affects firing rate of thalamus but not STN
-cv=0.2;
+cv=0.2; % coefficient of variation of input train (gamma distribution)
 
 %initial membrane voltages for all cells
 v1=-62+randn(n,1)*5;
@@ -29,14 +29,19 @@ r=randn(n,1)*2;
 pd=0; % 0 = healthy, 1 = PD
 wstim=0; % 0 = no DBS, 1 = DBS
 freq=0; % stimulation, if DBS then default = 130 Hz
-stimstart=500; % in ms
+stimstart=500; % in ms. Set to 0 for stimulation throughout entire tmax
 stimtime=500; % in ms
 stngpi=0; % 0 = STN-DBS, 1 = GPi-DBS
-if pd==0 % For investigating STN firing rate as current increases
-    Istn=33;
-else
-    Istin=23;
+stnfiring=1; % Change to 1 to modify STN current injection parameters
+
+if stnfiring == 1 % For investigating STN firing rate as current increases
+    if pd==0 
+        Istn=33;
+    elseif pd==1
+        Istin=23;
+    end
 end
+
 % Below is BG network code:
 %%Membrane parameters
 %In order of Th,STN,GP or Th,STN,GPe,GPi
@@ -66,9 +71,12 @@ Z2=zeros(n,1);Z4=zeros(n,1);
 
 %%with or without dbs
 Idbs=creatdbs(freq,tmax,dt); %creating DBS train with frequency freq
-if stimstart 
-Idbs(1:stimstart*100)=0; Idbs((stimstart+stimtime)*100:length(t))=0; % no stimulation for range outside of stim parameters
-if ~wstim; Idbs=zeros(1,length(t)); end
+if stimstart > 0
+    Idbs(1:stimstart*100)=0; % Disable DBS until stimstart
+    Idbs((stimstart+stimtime)*100:length(t))=0; % no stimulation for range outside of stim parameters
+end
+
+if ~wstim; Idbs=zeros(1,length(t)); end % Without DBS
 
 %%initial conditions
 vth(:,1)=v1;
@@ -152,14 +160,18 @@ for i=2:length(t)
     R1=R1+dt*((r1-R1)./tr1);
     
     %STN
-    if (50000 < i) && (i < 100000)
-        Iappstn = -0.0002;
+    if stnfiring == 1 % Investigate STN firing rate vs current increasing throughout time
+        if (50000 < i) && (i < 100000) % for between 500ms and 1000ms
+            x = i-50000;
+            Iappstn = Iappstn - (Istn-x/1000);
+        end
     end
     if stngpi == 0 % For the condition where DBS does not affect STN but affects GPi only
         vsn(:,i)=V2+dt*(1/Cm*(-Il2-Ik2-Ina2-It2-Ica2-Iahp2-Igesn+Iappstn+Idbs(i)));
     else
         vsn(:,i)=V2+dt*(1/Cm*(-Il2-Ik2-Ina2-It2-Ica2-Iahp2-Igesn+Iappstn));
     end
+    
     N2=N2+dt*(0.75*(n2-N2)./tn2); 
     H2=H2+dt*(0.75*(h2-H2)./th2);
     R2=R2+dt*(0.2*(r2-R2)./tr2);
