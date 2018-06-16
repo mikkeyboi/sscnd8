@@ -1,12 +1,11 @@
 clear all
 close all
-rootdir = uigetdir('/references/');
+rootdir = uigetdir('');
 addpath(genpath(rootdir)) % Choose BG network model root
-%addpath(genpath('/home/mikkeyboi/repos/sscnd8/bg_model_matlab_run/references/bg_model_matlab'))
 %% Set initial conditions
 
 %time variables
-tmax=2000; %maximum time (ms)
+tmax=1000; %maximum time (ms)
 dt=0.01; %timestep (ms)
 t=0:dt:tmax;
 n=100; %number of neurons in each nucleus (TH, STN, GPe, GPi)
@@ -22,25 +21,26 @@ r=randn(n,1)*2;
 
 %Sensorimotor cortex input to thalamic cells
 [Istim, timespike]=createSMC(tmax,dt,frequency,cv);
-%BGnetwork loads Istim.mat which has all the initial conditions
-%save('Istim.mat','Istim','timespike','tmax','dt','v1','v2','v3','v4','r','n');
 
 %% Define BGnetwork parameters and run BGnetwork manually
 pd=0; % 0 = healthy, 1 = PD
 wstim=0; % 0 = no DBS, 1 = DBS
-freq=0; % stimulation, if DBS then default = 130 Hz
-stimstart=500; % in ms. Set to 0 for stimulation throughout entire tmax
-stimtime=500; % in ms
+freq=0; % stimulation occurs if wstim=1, default = 130 Hz
+stimstart=0; % in ms. Set to 0 for stimulation throughout entire tmax
+stimtime=0; % in ms
 stngpi=0; % 0 = STN-DBS, 1 = GPi-DBS
-stnfiring=1; % 1 = For investigating STN firing rate as current increases
-if stnfiring==0 
+stnfiring=0; % 1 = For investigating STN firing rate as current increases.
+% Modify Istn for lesioning effects as well
+if stnfiring==1 
     if pd==0 
         Istn=33;
     else
         Istin=23;
     end
 end
-%  Below is BG network code, will take ~30 seconds to complete:
+gpelesion=0; % 1=Lesion of the GPe
+gpilesion=0; % 1=Lesion of the GPi
+%%  Below is BG network code, will take ~30 seconds to complete:
 %%Membrane parameters
 %In order of Th,STN,GP or Th,STN,GPe,GPi
 Cm=1;
@@ -55,7 +55,7 @@ A=[0 3 2 2]; B=[0 0.1 0.04 0.04]; the=[0 30 20 20];
 %%Synapse parameters
 %In order of Igesn,Isnge,Igege,Isngi,Igigi,Igith
 gsyn = [1 0.3 1 0.3 1 .08]; Esyn = [-85 0 -85 0 -85 -85];
-tau=5; gpeak=0.43;gpeak1=0.3;  100
+tau=5; gpeak=0.43;gpeak1=0.3; 
 
 %%Setting initial matrices
 vth=zeros(n,length(t)); %thalamic membrane voltage
@@ -182,6 +182,9 @@ for i=2:length(t)
     Z2=Z2+dt*zdot;
     
     %GPe
+    if gpelesion == 1 && (50000 < i) && (i < 100000)
+        Iappgpe = zeros(n,1);
+    end
     vge(:,i)=V3+dt*(1/Cm*(-Il3-Ik3-Ina3-It3-Ica3-Iahp3-Isnge-Igege+Iappgpe));
     N3=N3+dt*(0.1*(n3-N3)./tn3);
     H3=H3+dt*(0.05*(h3-H3)./th3);
@@ -190,6 +193,9 @@ for i=2:length(t)
     S3=S3+dt*(A(3)*(1-S3).*Hinf(V3-the(3))-B(3)*S3);
     
     %GPi
+    if gpilesion == 1 && (50000 < i) && (i < 100000)
+        Iappgpi = 0;
+    end
     if stngpi == 1 % for activated GPi fibres during DBS
         vgi(:,i)=V4+dt*(1/Cm*(-Il4-Ik4-Ina4-It4-Ica4-Iahp4-Isngi-Igigi+Iappgpi+Idbs(i)));
     else
@@ -209,7 +215,48 @@ end
 %%Calculation of error index
 EI=calculateEI(t,vth,timespike,tmax);
 
-%% Plotting
-plotpotentials; % Will give you Thalamus, STN, GPe, and GPi graphs
+%% Plotting all Thalamus, STN, GPe, and GPi graphs
+figure;
+plotpotentials; 
+%% Plotting all with all conditions (manually run 3 times and change conditions) Figure 4
+expswitch = 0; % 0=healthy, 1=PD, 2=PD+130Hz (STN-DBS)
+subplot(3,3,1+(expswitch*3));
+plot(t,vsn(1,:));axis([0 tmax -100 80 ]) 
+title('STN');
+ylabel('Vm (mV)'); xlabel('Time (msec)');
 
+subplot(3,3,2+(expswitch*3));
+plot(t,vge(1,:));axis([0 tmax -100 80 ]) 
+title('GPe')
+ylabel('Vm (mV)'); xlabel('Time (msec)');
+
+subplot(3,3,3+(expswitch*3));
+plot(t,vgi(1,:));axis([0 tmax -100 80 ]) 
+title('GPi')
+ylabel('Vm (mV)'); xlabel('Time (msec)');
+
+%% Effect of STN/GPi stimulation on GPe and GPi for PD at 130 Hz Plot
+% Lined up with Fig 11 on literature
+figure;
+subplot(4,1,1); 
+plot(t,vsn(1,:));axis([0 tmax -100 80 ]) 
+title('STN');
+ylabel('Vm (mV)'); xlabel('Time (msec)');
+
+subplot(4,1,2); 
+plot(t,vge(1,:));axis([0 tmax -100 80 ]) 
+title('GPe')
+ylabel('Vm (mV)'); xlabel('Time (msec)');
+
+subplot(4,1,3); 
+plot(t,vgi(1,:));axis([0 tmax -100 80 ]) 
+title('GPi')
+ylabel('Vm (mV)'); xlabel('Time (msec)');
+
+subplot(4,1,4); 
+ax=plotyy(t,vth(1,:),t,Istim(1:tmax/dt+1));
+set(ax(1),'XLim',[0 tmax],'YLim',[-100 20],'Visible','on')
+set(ax(2),'XLim',[0 tmax],'YLim',[-2 30],'Visible','off')
+title('Thalamic')
+ylabel('Vm (mV)'); xlabel('Time (msec)');
 

@@ -103,7 +103,7 @@ for i=2:length(t)
     Ica2=gca(2)*(C2.^2).*(V2-Eca(2));
     Iahp2=gahp(2)*(V2-Ek(2)).*(CA2./(CA2+k1(2)));
     Igesn=0.5*(gsyn(1)*(V2-Esyn(1)).*(S3+S31)); %Igesn=0;
-    Iappstn=130-pd*10;
+    Iappstn=33-pd*10;
     
     %GPe cell currents
     Il3=gl(3)*(V3-El(3));
@@ -171,34 +171,8 @@ end
 EI=calculateEI(t,vth,timespike,tmax);
 
 %% Custom Plots
-figure;
-% % Thalamus
-% subplot(2,2,1); 
-% ax=plotyy(t,vth(1,:),t,Istim(1:tmax/dt+1));
-% set(ax(1),'XLim',[0 tmax],'YLim',[-100 20],'Visible','on')
-% set(ax(2),'XLim',[0 tmax],'YLim',[-2 30],'Visible','off')
-% title('Thalamic')
-% ylabel('Vm (mV)'); xlabel('Time (msec)');
-% STN
-subplot(2,1,1); 
-plot(t,vsn(1,:));axis([0 tmax -100 80 ]) 
-title('STN');
-ylabel('Vm (mV)'); xlabel('Time (msec)');
-% TODO: Firing rate (spikes/s) vs Current
-subplot(2,1,2);
-plot(timespike,Iappstn)
-title('test');
-% % GPe
-% subplot(2,2,3); 
-% plot(t,vge(1,:));axis([0 tmax -100 80 ]) 
-% title('GPe')
-% ylabel('Vm (mV)'); xlabel('Time (msec)');
-% % GPi
-% subplot(2,2,4); 
-% plot(t,vgi(1,:));axis([0 tmax -100 80 ]) 
-% title('GPi')
-% ylabel('Vm (mV)'); xlabel('Time (msec)');
-% 
+for i = 1:length(vsn(1,:))
+    
 
 %% Plots membrane potential for one cell in each nucleus
 %plotpotentials; 
